@@ -1,0 +1,11 @@
+Startup Name: Innovate Solutions Inc.
+
+Key Metrics (Q1 2025):
+- Monthly Recurring Revenue (MRR): $50,000
+- New Customers Acquired: 100
+- Churn Rate (Customer): 5%
+- Average Revenue Per User (ARPU): $500
+- Customer Lifetime Value (CLTV): $6,000
+- Customer Acquisition Cost (CAC): $400
+- Website Visitors: 10,000
+- Conversion Rate (Visitor to Customer): 1%

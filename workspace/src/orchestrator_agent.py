@@ -14,6 +14,8 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 from smolagents import CodeAgent, ToolCallingAgent
 from smolagents.models import LiteLLMModel
 from workspace.src.brainstorming import BrainstormingAgent
+from workspace.src.data_analyst_agent import VCDataAnalystAgent
+from workspace.src.technical_assistant import TechnicalAssistant
 
 # Create a wrapper for BrainstormingAgent to make it work as a managed agent
 class BrainstormingAgentWrapper(ToolCallingAgent):
@@ -51,6 +53,60 @@ class HelloAgent(ToolCallingAgent):
         print(result)
         return result
 
+# Create a wrapper for VCDataAnalystAgent to make it work as a managed agent
+class VCDataAnalystAgentWrapper(ToolCallingAgent):
+    def __init__(self, data_analyst_agent: VCDataAnalystAgent, model):
+        super().__init__(
+            tools=[], # No tools needed, we'll use the internal agent
+            model=model,
+            name="data_analyst",
+            description="Analyzes startup data from a VC perspective, focusing on growth and churn."
+        )
+        self.data_analyst_agent = data_analyst_agent
+
+    def run(self, query: str) -> str:
+        # The query for the data analyst agent is expected to be a file path
+        file_path = query.strip()
+        if not file_path:
+            return "Please provide a file path to analyze."
+        
+        # Call the analyze method of the internal VCDataAnalystAgent
+        result = self.data_analyst_agent.analyze(file_path)
+        return result
+
+# Create a wrapper for TechnicalAssistant to make it work as a managed agent
+class TechnicalAssistantWrapper(ToolCallingAgent):
+    def __init__(self, technical_assistant: TechnicalAssistant, model):
+        # Import the tools to make them available
+        from workspace.src.huggingface_search import search_models, analyze_model_feasibility
+        from workspace.src.hf_papers_search import search_papers, analyze_paper_novelty
+        
+        super().__init__(
+            tools=[search_models, search_papers, analyze_model_feasibility, analyze_paper_novelty],  # Include the tools
+            model=model,
+            name="technical_assistant",
+            description="Analyzes AI projects for technical feasibility, novelty, and investment potential. Provides comprehensive analysis using HuggingFace models and papers."
+        )
+        self.technical_assistant = technical_assistant
+    
+    def run(self, query: str) -> str:
+        # Determine what type of analysis to perform based on the query
+        query_lower = query.lower()
+        
+        # For research queries, directly use the agent to leverage tools
+        if "research" in query_lower or "latest" in query_lower or "developments" in query_lower:
+            # Research latest developments - this needs the tools
+            return self.technical_assistant.research_latest_developments(query)
+        elif "novelty" in query_lower or "novel" in query_lower or "technique" in query_lower:
+            # Technique novelty evaluation
+            return self.technical_assistant.evaluate_technique_novelty(query)
+        elif "project" in query_lower or "analyze" in query_lower or "investment" in query_lower:
+            # Full project analysis
+            return self.technical_assistant.analyze_ai_project(query)
+        else:
+            # Default to research if no clear indicator
+            return self.technical_assistant.research_latest_developments(query)
+
 # Initialize the orchestrator
 def create_orchestrator(agents: Optional[List[str]] = None, brainstorming_method: Optional[str] = None):
     # Check if API key is available
@@ -66,7 +122,7 @@ def create_orchestrator(agents: Optional[List[str]] = None, brainstorming_method
     
     # If no agents specified, use all available agents
     if agents is None:
-        agents = ["brainstorming", "hello"]
+        agents = ["brainstorming", "hello", "data_analyst", "technical_assistant"]
     
     # Create and add BrainstormingAgent if requested
     if "brainstorming" in agents:
@@ -85,6 +141,26 @@ def create_orchestrator(agents: Optional[List[str]] = None, brainstorming_method
         hello_agent = HelloAgent(model)
         managed_agents.append(hello_agent)
         print("HelloAgent initialized successfully.")
+
+    # Create and add VCDataAnalystAgent if requested
+    if "data_analyst" in agents:
+        try:
+            data_analyst_agent_instance = VCDataAnalystAgent(ANTHROPIC_API_KEY)
+            data_analyst_wrapper = VCDataAnalystAgentWrapper(data_analyst_agent_instance, model)
+            managed_agents.append(data_analyst_wrapper)
+            print("VCDataAnalystAgent initialized successfully.")
+        except Exception as e:
+            print(f"Error initializing VCDataAnalystAgent: {e}")
+    
+    # Create and add TechnicalAssistant if requested
+    if "technical_assistant" in agents:
+        try:
+            technical_assistant_instance = TechnicalAssistant(ANTHROPIC_API_KEY)
+            technical_assistant_wrapper = TechnicalAssistantWrapper(technical_assistant_instance, model)
+            managed_agents.append(technical_assistant_wrapper)
+            print("TechnicalAssistant initialized successfully.")
+        except Exception as e:
+            print(f"Error initializing TechnicalAssistant: {e}")
     
     # Create the manager agent
     manager_agent = CodeAgent(
@@ -92,7 +168,7 @@ def create_orchestrator(agents: Optional[List[str]] = None, brainstorming_method
         model=model,
         managed_agents=managed_agents,
         additional_authorized_imports=["time", "numpy", "pandas"],  # Add if needed
-        max_steps=3,  # Limit the number of steps to avoid over-processing
+        max_steps=5,  # Increased max_steps to allow for more complex interactions
     )
     
     return manager_agent

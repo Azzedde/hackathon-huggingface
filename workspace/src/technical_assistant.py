@@ -23,10 +23,14 @@ from smolagents.models import LiteLLMModel
 
 class TechnicalAssistant:
     def __init__(self, api_key):
+        # Initialize the tools explicitly
+        self.tools = [search_models, search_papers, analyze_model_feasibility, analyze_paper_novelty]
+        
         self.agent = CodeAgent(
-            tools=[search_models, search_papers, analyze_model_feasibility, analyze_paper_novelty],
+            tools=self.tools,
             model=LiteLLMModel(model_id="anthropic/claude-3-5-sonnet-latest", api_key=api_key),
-            add_base_tools=False,
+            add_base_tools=True,  # Changed to True to include base tools
+            additional_authorized_imports=["requests", "json", "datetime", "re"],  # Add necessary imports
         )
 
     def analyze_ai_project(self, project_description: str) -> str:
