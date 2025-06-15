@@ -65,10 +65,10 @@ export default function AgentPlayground() {
                         </PopoverButton>
                         <PopoverPanel
                           anchor="right"
-                          className="divide-y divide-gray-200 rounded-xl bg-white/5 text-sm/6 transition duration-200 ease-in-out [--anchor-gap:8px] data-[closed]:-translate-y-1 data-[closed]:opacity-0"
+                          className="max-w-52 rounded-lg border border-gray-200 bg-white bg-opacity-65 p-4 text-sm shadow-lg transition duration-200 ease-in-out [--anchor-gap:8px] data-[closed]:-translate-y-1 data-[closed]:opacity-0"
                         >
-                          <div className="p-3">
-                            <p className="text-gray-700">{agent.description}</p>
+                          <div className="text-gray-700 leading-relaxed">
+                            <p>{agent.description}</p>
                           </div>
                         </PopoverPanel>
                       </Popover>
@@ -105,18 +105,18 @@ export default function AgentPlayground() {
                        <span className="text-gray-800 font-medium">{agent.name}</span>
                      </div>
                        <Popover className="relative">
-                        <PopoverButton className="text-gray-500 hover:text-gray-700 focus:outline-none">
-                          ?
-                        </PopoverButton>
-                        <PopoverPanel
-                          anchor="right"
-                          className="divide-y divide-gray-200 rounded-xl bg-white/5 text-sm/6 transition duration-200 ease-in-out [--anchor-gap:8px] data-[closed]:-translate-y-1 data-[closed]:opacity-0"
-                        >
-                          <div className="p-3">
-                            <p className="text-gray-700">{agent.description}</p>
-                          </div>
-                        </PopoverPanel>
-                      </Popover>
+                         <PopoverButton className="text-gray-500 hover:text-gray-700 focus:outline-none">
+                           ?
+                         </PopoverButton>
+                         <PopoverPanel
+                           anchor="right"
+                           className="max-w-52 rounded-lg border border-gray-200 bg-white bg-opacity-65 p-4 text-sm shadow-lg transition duration-200 ease-in-out [--anchor-gap:8px] data-[closed]:-translate-y-1 data-[closed]:opacity-0"
+                         >
+                           <div className="text-gray-700 leading-relaxed">
+                             <p>{agent.description}</p>
+                           </div>
+                         </PopoverPanel>
+                       </Popover>
                     </div>
                   )}
                 </Draggable>
