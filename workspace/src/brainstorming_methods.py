@@ -80,10 +80,15 @@ Topic to analyze: {idea}
 List of Six Thinking Hats perspectives:
 """
 
-# Helper function to parse bullet points from a string
 def _parse_bullet_points(text: str) -> list[str]:
-    return [line.strip() for line in text.split('\n') if line.strip().startswith('- ') or line.strip().startswith('* ')]
-
+    bullets = []
+    for line in text.splitlines():
+        stripped = line.strip()
+        # look for hyphens, stars or “•”
+        if stripped.startswith(('- ', '* ', '• ')):
+            # drop the first two chars (bullet + space)
+            bullets.append(stripped[2:])
+    return bullets
 
 # wrapping up the starbursting chains
 def sb(user_query, agent: CodeAgent):
