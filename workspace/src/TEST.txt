@@ -1,0 +1,65 @@
+Nom de la Startup : GreenTech Innovations
+
+Secteur : Énergie renouvelable
+
+Description du produit :
+GreenTech Innovations développe des panneaux solaires modulaires et intelligents destinés aux foyers urbains. Notre technologie brevetée optimise l'efficacité énergétique en ajustant automatiquement l'angle des panneaux en fonction de la position du soleil et des conditions météorologiques locales.
+
+Date de création : Mars 2022
+
+Localisation : Paris, France
+
+Équipe fondatrice :
+- Alice Dupont (CEO) : 10 ans d'expérience en gestion de projets technologiques.
+- Marc Lefevre (CTO) : Ancien ingénieur principal chez SolarTech Corp.
+
+Modèle économique :
+- Vente directe aux consommateurs via notre site web.
+- Partenariats avec des installateurs locaux pour l'installation et la maintenance.
+
+Données financières (2023) :
+- Chiffre d'affaires : 1,2 million d'euros
+- Coût des biens vendus (COGS) : 600 000 €
+- Marge brute : 50%
+- Dépenses opérationnelles : 400 000 €
+- EBITDA : 200 000 €
+- Bénéfice net : 150 000 €
+
+Indicateurs clés de performance (KPI) :
+- Croissance du chiffre d'affaires (YoY) : 80%
+- Taux de rétention client : 90%
+- Coût d'acquisition client (CAC) : 150 €
+- Valeur à vie du client (LTV) : 1 200 €
+- Churn rate : 5% annuel
+- Nombre de clients : 800
+
+Marché cible :
+- Particuliers dans les zones urbaines avec des toits adaptés.
+- Marché total adressable (TAM) : 10 milliards d'euros en Europe.
+- Marché servi adressable (SAM) : 2 milliards d'euros.
+- Marché obtenu adressable (SOM) : 500 millions d'euros.
+
+Stratégie de croissance :
+- Expansion dans 5 nouvelles villes françaises d'ici la fin de l'année.
+- Lancement d'une campagne de marketing digital ciblée.
+- Développement de partenariats avec des entreprises de construction pour intégrer nos panneaux dans de nouveaux projets résidentiels.
+
+Objectifs de financement :
+- Levée de fonds de 2 millions d'euros pour :
+  - R&D pour améliorer l'efficacité des panneaux.
+  - Expansion géographique.
+  - Renforcement de l'équipe commerciale et marketing.
+
+Risques identifiés :
+- Dépendance à l'égard de fournisseurs spécifiques pour les composants clés.
+- Sensibilité aux fluctuations des prix des matières premières.
+- Concurrence croissante dans le secteur des énergies renouvelables.
+
+Opportunités :
+- Croissance du marché des énergies renouvelables en Europe.
+- Incitations gouvernementales pour l'adoption de technologies vertes.
+- Augmentation de la demande des consommateurs pour des solutions énergétiques durables.
+
+Contact :
+- Email : contact@greentechinnovations.fr
+- Site web : www.greentechinnovations.fr
