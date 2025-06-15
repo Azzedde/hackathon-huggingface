@@ -14,6 +14,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 from smolagents import CodeAgent, ToolCallingAgent
 from smolagents.models import LiteLLMModel
 from workspace.src.brainstorming import BrainstormingAgent
+from workspace.src.data_analyst_agent import VCDataAnalystAgent
 
 # Create a wrapper for BrainstormingAgent to make it work as a managed agent
 class BrainstormingAgentWrapper(ToolCallingAgent):
@@ -51,6 +52,27 @@ class HelloAgent(ToolCallingAgent):
         print(result)
         return result
 
+# Create a wrapper for VCDataAnalystAgent to make it work as a managed agent
+class VCDataAnalystAgentWrapper(ToolCallingAgent):
+    def __init__(self, data_analyst_agent: VCDataAnalystAgent, model):
+        super().__init__(
+            tools=[], # No tools needed, we'll use the internal agent
+            model=model,
+            name="data_analyst",
+            description="Analyzes startup data from a VC perspective, focusing on growth and churn."
+        )
+        self.data_analyst_agent = data_analyst_agent
+
+    def run(self, query: str) -> str:
+        # The query for the data analyst agent is expected to be a file path
+        file_path = query.strip()
+        if not file_path:
+            return "Please provide a file path to analyze."
+        
+        # Call the analyze method of the internal VCDataAnalystAgent
+        result = self.data_analyst_agent.analyze(file_path)
+        return result
+
 # Initialize the orchestrator
 def create_orchestrator(agents: Optional[List[str]] = None, brainstorming_method: Optional[str] = None):
     # Check if API key is available
@@ -66,7 +88,7 @@ def create_orchestrator(agents: Optional[List[str]] = None, brainstorming_method
     
     # If no agents specified, use all available agents
     if agents is None:
-        agents = ["brainstorming", "hello"]
+        agents = ["brainstorming", "hello", "data_analyst"] # Added data_analyst here
     
     # Create and add BrainstormingAgent if requested
     if "brainstorming" in agents:
@@ -85,6 +107,16 @@ def create_orchestrator(agents: Optional[List[str]] = None, brainstorming_method
         hello_agent = HelloAgent(model)
         managed_agents.append(hello_agent)
         print("HelloAgent initialized successfully.")
+
+    # Create and add VCDataAnalystAgent if requested
+    if "data_analyst" in agents:
+        try:
+            data_analyst_agent_instance = VCDataAnalystAgent(ANTHROPIC_API_KEY)
+            data_analyst_wrapper = VCDataAnalystAgentWrapper(data_analyst_agent_instance, model)
+            managed_agents.append(data_analyst_wrapper)
+            print("VCDataAnalystAgent initialized successfully.")
+        except Exception as e:
+            print(f"Error initializing VCDataAnalystAgent: {e}")
     
     # Create the manager agent
     manager_agent = CodeAgent(
@@ -92,7 +124,7 @@ def create_orchestrator(agents: Optional[List[str]] = None, brainstorming_method
         model=model,
         managed_agents=managed_agents,
         additional_authorized_imports=["time", "numpy", "pandas"],  # Add if needed
-        max_steps=3,  # Limit the number of steps to avoid over-processing
+        max_steps=5,  # Increased max_steps to allow for more complex interactions
     )
     
     return manager_agent

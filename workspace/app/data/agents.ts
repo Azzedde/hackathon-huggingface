@@ -37,4 +37,10 @@ export const agents: Agent[] = [
     description: 'Provides legal analysis and jurisprudence insights.',
   },
 
+  {
+    id: 'data_analyst',
+    name: 'VC Data Analyst Agent',
+    iconUrl: '/icons/alpha.png', // Assuming a default icon for now
+    description: 'Analyzes startup data, focusing on growth and churn from a VC perspective.',
+  },
 ];
