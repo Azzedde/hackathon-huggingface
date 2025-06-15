@@ -17,27 +17,22 @@ from workspace.src.brainstorming import BrainstormingAgent
 
 # Create a wrapper for BrainstormingAgent to make it work as a managed agent
 class BrainstormingAgentWrapper(ToolCallingAgent):
-    def __init__(self, brainstorming_agent: BrainstormingAgent, model):
+    def __init__(self, brainstorming_agent: BrainstormingAgent, model, default_mode: str = "SCAMPER"):
         super().__init__(
             tools=[],  # No tools needed, we'll use the internal agent
             model=model,
             name="brainstorming",
-            description="Generates ideas using various brainstorming techniques. Specify mode by prefixing with 'MODE:' (e.g., 'SCAMPER: your query'). Available modes: Starbursting, Mind Mapping, Reverse Brainstorming, Role Storming, SCAMPER, Six Thinking Hats."
+            description=f"Generates ideas using the {default_mode} brainstorming technique. This agent helps with creative ideation and problem-solving."
         )
         self.brainstorming_agent = brainstorming_agent
+        self.default_mode = default_mode
     
     def run(self, query: str) -> str:
-        # Parse the query to extract mode if specified, otherwise use default
-        mode = "SCAMPER"  # Default mode
+        # Use the default mode set during initialization
+        mode = self.default_mode
         
-        # Check if query starts with a mode specification
-        modes = ["Starbursting", "Mind Mapping", "Reverse Brainstorming", 
-                 "Role Storming", "SCAMPER", "Six Thinking Hats"]
-        for m in modes:
-            if query.lower().startswith(m.lower() + ":"):
-                mode = m
-                query = query[len(m)+1:].strip()
-                break
+        # Don't parse mode from query anymore - use the one set by the user
+        # This ensures the user's selected brainstorming method is always used
         
         return self.brainstorming_agent.generate_ideas(mode, query)
 
@@ -57,7 +52,7 @@ class HelloAgent(ToolCallingAgent):
         return result
 
 # Initialize the orchestrator
-def create_orchestrator():
+def create_orchestrator(agents: Optional[List[str]] = None, brainstorming_method: Optional[str] = None):
     # Check if API key is available
     if ANTHROPIC_API_KEY is None:
         print("Error: ANTHROPIC_API_KEY environment variable not set.")
@@ -69,19 +64,27 @@ def create_orchestrator():
     # Initialize managed agents
     managed_agents = []
     
-    # Create and add BrainstormingAgent
-    try:
-        brainstorming_agent_instance = BrainstormingAgent(ANTHROPIC_API_KEY)
-        brainstorming_wrapper = BrainstormingAgentWrapper(brainstorming_agent_instance, model)
-        managed_agents.append(brainstorming_wrapper)
-        print("BrainstormingAgent initialized successfully.")
-    except Exception as e:
-        print(f"Error initializing BrainstormingAgent: {e}")
+    # If no agents specified, use all available agents
+    if agents is None:
+        agents = ["brainstorming", "hello"]
     
-    # Create and add HelloAgent
-    hello_agent = HelloAgent(model)
-    managed_agents.append(hello_agent)
-    print("HelloAgent initialized successfully.")
+    # Create and add BrainstormingAgent if requested
+    if "brainstorming" in agents:
+        try:
+            brainstorming_agent_instance = BrainstormingAgent(ANTHROPIC_API_KEY)
+            # Use the provided brainstorming method or default to SCAMPER
+            default_mode = brainstorming_method if brainstorming_method else "SCAMPER"
+            brainstorming_wrapper = BrainstormingAgentWrapper(brainstorming_agent_instance, model, default_mode)
+            managed_agents.append(brainstorming_wrapper)
+            print(f"BrainstormingAgent initialized successfully with method: {default_mode}")
+        except Exception as e:
+            print(f"Error initializing BrainstormingAgent: {e}")
+    
+    # Create and add HelloAgent if requested
+    if "hello" in agents:
+        hello_agent = HelloAgent(model)
+        managed_agents.append(hello_agent)
+        print("HelloAgent initialized successfully.")
     
     # Create the manager agent
     manager_agent = CodeAgent(
@@ -89,14 +92,15 @@ def create_orchestrator():
         model=model,
         managed_agents=managed_agents,
         additional_authorized_imports=["time", "numpy", "pandas"],  # Add if needed
+        max_steps=3,  # Limit the number of steps to avoid over-processing
     )
     
     return manager_agent
 
 # Entry point to run the manager agent
-def run_orchestrator(user_input: str) -> str:
+def run_orchestrator(user_input: str, agents: Optional[List[str]] = None, brainstorming_method: Optional[str] = None) -> str:
     print("Creating orchestrator...")
-    manager_agent = create_orchestrator()
+    manager_agent = create_orchestrator(agents, brainstorming_method)
     
     if manager_agent is None:
         return "Orchestrator could not be initialized due to missing API key or other error."

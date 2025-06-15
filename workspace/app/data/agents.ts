@@ -7,27 +7,34 @@ export type Agent = {
 
 export const agents: Agent[] = [
   {
-    id: 'agent-1',
-    name: 'Agent Alpha',
-    iconUrl: '/icons/alpha.png', // Placeholder
-    description: 'Agent Alpha is good at analyzing data.',
+    id: 'brainstorming',
+    name: 'Brainstorming Agent',
+    iconUrl: '/icons/alpha.png',
+    description: 'Generates ideas using various brainstorming techniques.',
   },
   {
-    id: 'agent-2',
-    name: 'Agent Beta',
-    iconUrl: '/icons/beta.png', // Placeholder
-    description: 'Agent Beta is skilled in natural language processing.',
+    id: 'analyst',
+    name: 'Analyst Agent',
+    iconUrl: '/icons/alpha.png',
+    description: 'Provides thoughtful analysis and insights based on data.',
   },
   {
-    id: 'agent-3',
-    name: 'Agent Gamma',
-    iconUrl: '/icons/gamma.png', // Placeholder
-    description: 'Agent Gamma specializes in image recognition.',
+    id: 'research',
+    name: 'Research Agent',
+    iconUrl: '/icons/alpha.png',
+    description: 'Conducts research to find fresh insights and information.',
   },
   {
-    id: 'agent-4',
-    name: 'Agent Delta',
-    iconUrl: '/icons/delta.png', // Placeholder
-    description: 'Agent Delta is an expert in machine learning.',
+    id: 'technical',
+    name: 'Technical Agent',
+    iconUrl: '/icons/alpha.png',
+    description: 'Helps understand complex technical projects and documentation.',
   },
+  {
+    id: 'legal_jurist',
+    name: 'Legal Jurist Agent',
+    iconUrl: '/icons/alpha.png',
+    description: 'Provides legal analysis and jurisprudence insights.',
+  },
+
 ];
