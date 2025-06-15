@@ -31,6 +31,12 @@ export const agents: Agent[] = [
     description: 'Helps understand complex technical projects and documentation.',
   },
   {
+    id: 'technical_assistant',
+    name: 'AI Technical Assistant',
+    iconUrl: '/icons/brain.png',
+    description: 'Analyzes AI projects for feasibility, novelty, and investment potential using HuggingFace data.',
+  },
+  {
     id: 'legal_jurist',
     name: 'Legal Jurist Agent',
     iconUrl: '/icons/alpha.png',
