@@ -19,7 +19,7 @@ export default function Home() {
         <div className="w-full max-w-5xl mb-12 flex flex-col lg:flex-row gap-8">
           {/* Introduction Section (Left) */}
           <div className="w-full lg:w-1/2 bg-white p-8 rounded-lg shadow-xl text-gray-800">
-            <h1 className="text-3xl font-bold text-yellow-600 mb-4">Welcome to the Agent Playground!</h1>
+            <h1 className="text-3xl font-bold text-yellow-600 mb-4">Welcome to the Project Advisor !</h1>
             <p className="text-base text-gray-700 leading-relaxed">
               Unlock the full potential of our platform by combining different agents to achieve powerful results. This playground allows you to experiment with various agent configurations and see how they interact to process your prompts.
             </p>
