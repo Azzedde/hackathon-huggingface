@@ -6,6 +6,8 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "duckduckgo-search>=8.0.4",
+    "pydantic>=2.8.0,<2.11.0",
+    "python-dotenv>=1.0.0",
     "smolagents[litellm]>=1.18.0",
     "streamlit>=1.45.1",
 ]
