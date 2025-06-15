@@ -1,7 +1,4 @@
 #!/usr/bin/env python3
-"""
-Clean version of technical_assistant.py that suppresses Pydantic warnings
-"""
 
 import warnings
 import sys

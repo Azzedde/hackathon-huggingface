@@ -12,6 +12,8 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 
 from smolagents.models import LiteLLMModel
 from workspace.src.brainstorming import BrainstormingAgent
+from workspace.src.legal_assistant import LegalAssistant
+from workspace.src.technical_assistant import TechnicalAssistant
 
 class SimpleOrchestrator:
     """A simple orchestrator that directly routes to agents without code execution"""
@@ -19,6 +21,8 @@ class SimpleOrchestrator:
     def __init__(self, api_key: str):
         self.model = LiteLLMModel(model_id="anthropic/claude-3-5-sonnet-latest", api_key=api_key)
         self.brainstorming_agent = BrainstormingAgent(api_key)
+        self.legal_assistant = LegalAssistant(api_key)
+        self.technical_assistant = TechnicalAssistant(api_key)
         
     def run(self, prompt: str, agents: Optional[List[str]] = None) -> str:
         """Route the prompt to appropriate agents based on content or selection"""
@@ -66,9 +70,36 @@ class SimpleOrchestrator:
                 responses.append(f"[Technical Agent]\n{response}")
                 
             elif agent_id == "legal_jurist":
-                # Placeholder for legal agent
-                response = f"Legal perspective on: {prompt}\n\nLegal considerations:\n- Compliance requirements to be reviewed\n- Regulatory framework analysis needed\n- Risk assessment recommended"
-                responses.append(f"[Legal Jurist Agent]\n{response}")
+                # Use the actual legal assistant
+                try:
+                    if "startup" in prompt.lower() or "investissement" in prompt.lower():
+                        response = self.legal_assistant.analyze_startup_legal_framework(prompt)
+                    elif "risque" in prompt.lower() or "risk" in prompt.lower():
+                        response = self.legal_assistant.evaluate_legal_risks(prompt)
+                    elif "secteur" in prompt.lower() or "réglementation" in prompt.lower():
+                        response = self.legal_assistant.research_sector_regulations(prompt)
+                    else:
+                        response = self.legal_assistant.analyze_startup_legal_framework(prompt)
+                    responses.append(f"[Assistant Juridique]\n{response}")
+                except Exception as e:
+                    response = f"Analyse juridique de: {prompt}\n\nConsidérations légales:\n- Exigences de conformité à examiner\n- Analyse du cadre réglementaire nécessaire\n- Évaluation des risques recommandée\n\nErreur: {e}"
+                    responses.append(f"[Assistant Juridique]\n{response}")
+            
+            elif agent_id == "technical":
+                # Use the actual technical assistant
+                try:
+                    if "projet" in prompt.lower() or "startup" in prompt.lower():
+                        response = self.technical_assistant.analyze_ai_project(prompt)
+                    elif "technique" in prompt.lower() or "innovation" in prompt.lower():
+                        response = self.technical_assistant.evaluate_technique_novelty(prompt)
+                    elif "recherche" in prompt.lower() or "développement" in prompt.lower():
+                        response = self.technical_assistant.research_latest_developments(prompt)
+                    else:
+                        response = self.technical_assistant.analyze_ai_project(prompt)
+                    responses.append(f"[Assistant Technique]\n{response}")
+                except Exception as e:
+                    response = f"Analyse technique de: {prompt}\n\nConsidérations techniques:\n- Faisabilité d'implémentation à évaluer\n- Planification d'architecture requise\n- Stack technologique à déterminer\n\nErreur: {e}"
+                    responses.append(f"[Assistant Technique]\n{response}")
         
         # Combine all responses
         if len(responses) == 1:
@@ -82,17 +113,17 @@ class SimpleOrchestrator:
         agents = []
         
         # Check for keywords to determine agents
-        if any(word in prompt_lower for word in ["idea", "brainstorm", "creative", "think"]):
+        if any(word in prompt_lower for word in ["idea", "brainstorm", "creative", "think", "idée", "créatif"]):
             agents.append("brainstorming")
-        if any(word in prompt_lower for word in ["hello", "hi", "greet"]):
+        if any(word in prompt_lower for word in ["hello", "hi", "greet", "bonjour", "salut"]):
             agents.append("hello")
-        if any(word in prompt_lower for word in ["analyze", "analysis", "insight"]):
+        if any(word in prompt_lower for word in ["analyze", "analysis", "insight", "analyser", "analyse"]):
             agents.append("analyst")
-        if any(word in prompt_lower for word in ["research", "investigate", "study"]):
+        if any(word in prompt_lower for word in ["research", "investigate", "study", "recherche", "étudier"]):
             agents.append("research")
-        if any(word in prompt_lower for word in ["technical", "code", "implement", "build"]):
+        if any(word in prompt_lower for word in ["technical", "code", "implement", "build", "technique", "technologique", "ia", "ai"]):
             agents.append("technical")
-        if any(word in prompt_lower for word in ["legal", "law", "compliance", "regulation"]):
+        if any(word in prompt_lower for word in ["legal", "law", "compliance", "regulation", "juridique", "droit", "légal", "conformité", "réglementation"]):
             agents.append("legal_jurist")
         
         # Default to brainstorming if no specific agent detected
